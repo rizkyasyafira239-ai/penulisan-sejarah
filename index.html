@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MPI Sejarah - Penelitian dan Penulisan Sejarah</title>
+<style>
+*{box-sizing:border-box;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0e1038;overflow:hidden;user-select:none;-webkit-user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;overflow:hidden;background:#1c2a7a}
+.screen{position:absolute;inset:0;animation:in .5s both}
+.screen.out{animation:out .35s both}
+@keyframes in{from{opacity:0;transform:translateX(60px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes out{to{opacity:0;transform:translateX(-60px) scale(.98)}}
+@keyframes fl{50%{transform:translateY(-14px) rotate(8deg)}}
+.bgi{position:absolute;inset:0;background-size:cover;background-position:center}
+.deco span{position:absolute;font-size:48px;opacity:.55;animation:fl 4s ease-in-out infinite;pointer-events:none}
+.panel{position:absolute;left:64px;right:64px;top:44px;bottom:118px;background:rgba(255,255,255,.95);border-radius:28px;border:5px solid #14163a;padding:26px 40px;overflow:auto;color:#14163a;font-size:24px;line-height:1.42}
+.panel h2{font-size:36px;margin-bottom:12px;color:#1c2a7a}
+.panel p{margin-bottom:10px}
+.btn{background:#ffc233;color:#14163a;border:4px solid #14163a;border-radius:18px;font-size:24px;font-weight:700;padding:10px 26px;cursor:pointer;box-shadow:0 5px 0 #14163a;transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #14163a}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible{outline:5px solid #d81b60;outline-offset:3px}
+.btn.sm{font-size:20px;padding:6px 18px;margin-left:10px}
+.btn.ok{background:#2e9e4f;color:#fff}.btn.no{background:#c62828;color:#fff}
+.nav{position:absolute;left:64px;right:64px;bottom:26px;height:70px;display:flex;align-items:center;gap:24px}
+.nav .pg{flex:1;color:#fff;font-weight:700;font-size:20px;text-align:center;text-shadow:0 2px 4px #000}
+.bar{height:16px;background:#14163a;border:3px solid #fff;border-radius:10px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:#ffc233;transition:width .5s}
+.q{font-size:27px;font-weight:700;margin:6px 0 14px}
+.opts{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.opts .btn{text-align:left;font-size:23px;font-weight:600;background:#fff}
+.opts.row{flex-direction:row;flex-wrap:wrap}.opts.row .btn{flex:1;text-align:center}
+.fb{margin-top:14px;font-size:22px;min-height:60px;background:#eef2ff;border-radius:14px;padding:10px 16px}
+.fb:empty{display:none}
+.slots{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.slot{background:#d7f5e0;border:3px solid #2e9e4f;border-radius:12px;padding:6px 14px;font-size:21px}
+.chips{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+.chip{background:#ffe08a;border:3px solid #14163a;border-radius:30px;padding:6px 18px;font-weight:700;font-size:22px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff3c4;border:4px solid #14163a;border-radius:18px;padding:12px 18px;font-size:22px}
+.card b{display:block;font-size:26px;color:#1c2a7a}
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px}
+.menu .btn{height:150px;font-size:30px;text-align:center;line-height:1.2}
+.menu .btn small{display:block;font-size:19px;font-weight:600;margin-top:6px}
+.center{text-align:center}
+input{font-size:32px;padding:14px 20px;border:5px solid #14163a;border-radius:18px;width:560px;text-align:center}
+.lb{width:100%;border-collapse:collapse;font-size:24px}.lb td,.lb th{padding:7px 12px;border-bottom:2px solid #c9cdf0;text-align:left}
+#mb{position:absolute;right:18px;top:14px;z-index:99;width:62px;height:62px;border-radius:50%;font-size:30px;padding:0;text-align:center}
+#hint{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:#fff;font-size:20px;text-shadow:0 2px 4px #000;animation:fl 2.5s infinite}
+.photo{width:260px;height:260px;border-radius:50%;border:6px solid #14163a;background:#ddd center/cover;margin:14px auto}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+</style></head><body>
+<div id="stage"><button class="btn" id="mb" aria-label="Atur musik latar" title="Musik latar">🔊</button></div>
+<script>
+const st=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);st.style.transform='translate(-50%,-50%) scale('+s+')'}
+addEventListener('resize',fit);fit();
+const G=['linear-gradient(135deg,#1c2a7a,#0f8b8d)','linear-gradient(135deg,#6a1b9a,#ef6c00)','linear-gradient(135deg,#00695c,#fdd835)','linear-gradient(135deg,#b71c1c,#1a237e)'];
+const DE=['🏺','📜','🔍','🗿','🪔','⏳'];
+let cur=null,name='',musicOn=true,mem=[];
+const bgm=new Audio('./assets/musiklatar.mp3');bgm.loop=true;bgm.volume=.35;
+function sfx(ok){const a=new Audio('./assets/'+(ok?'benar':'salah')+'.mp3');a.play().catch(()=>{})}
+const mb=document.getElementById('mb');
+mb.onclick=e=>{e.stopPropagation();musicOn=!musicOn;mb.textContent=musicOn?'🔊':'🔇';musicOn?bgm.play().catch(()=>{}):bgm.pause()};
+function bg(el,n){const ex=['png','jpg','jpeg'];let i=0;(function t(){if(i>=ex.length)return;const u='./assets/'+n+'.'+ex[i++],im=new Image();im.onload=()=>el.style.backgroundImage='url('+u+')';im.onerror=t;im.src=u})()}
+function show(html,bn,g,after){
+ const old=cur,d=document.createElement('div');d.className='screen';d.style.background=g||G[0];
+ d.innerHTML='<div class="bgi"></div>'+html+'<div class="deco">'+DE.map((e,i)=>'<span style="'+(i%2?'right':'left')+':14px;top:'+(20+i*110)+'px;animation-delay:'+i*.6+'s">'+e+'</span>').join('')+'</div>';
+ bg(d.querySelector('.bgi'),bn);st.appendChild(d);
+ if(old){old.classList.add('out');setTimeout(()=>old.remove(),360)}
+ cur=d;if(after)after(d);mb.parentNode.appendChild(mb)}
+function nav(lbl,pct,back,next,dis){return '<div class="nav"><button class="btn" onclick="'+back+'">◀ Kembali</button><div class="pg">'+lbl+'<div class="bar"><i style="width:'+pct+'%"></i></div></div><button class="btn" id="nx" onclick="'+next+'"'+(dis?' disabled':'')+'>Lanjut ▶</button></div>'}
+
+/* HALAMAN AWAL */
+function cover(){show('<div style="position:absolute;inset:0;cursor:pointer" id="cv"></div><div id="hint">sentuh dimana saja</div>','cover',G[0],d=>{
+ d.querySelector('#cv').onclick=d.querySelector('#hint').onclick=()=>{if(musicOn)bgm.play().catch(()=>{});nameScr()}});
+ cur.onclick=()=>{if(musicOn)bgm.play().catch(()=>{});nameScr()}}
+function nameScr(){cur.onclick=null;
+ show('<div class="panel center" style="left:240px;right:240px;top:130px;bottom:130px"><h2>Siapa namamu, Detektif?</h2><p>Namamu dipakai untuk papan peringkat di perangkat ini.</p><br><input id="nm" maxlength="20" placeholder="Nama pengguna" autocomplete="off"><br><br><br><button class="btn" id="go">Mulai Petualangan ▶</button><p id="er" style="color:#c62828;margin-top:10px"></p></div>','namapengguna',G[1],d=>{
+ const i=d.querySelector('#nm');i.value=name;const f=()=>{const v=i.value.trim();if(!v){d.querySelector('#er').textContent='Tulis namamu dulu, ya.';return}name=v;menu()};
+ d.querySelector('#go').onclick=f;i.onkeydown=e=>{if(e.key==='Enter')f()}})}
+function menu(){
+ show('<div class="panel center"><h2>Halo, '+name.replace(/</g,'&lt;')+'! Pilih menu:</h2><div class="menu"><button class="btn" onclick="tujuan()">🎯 Tujuan<small>Apa yang dipelajari</small></button><button class="btn" onclick="learn(0)">📖 Belajar<small>Materi lengkap</small></button><button class="btn" onclick="sc=0;quiz(0)">🎮 Bermain<small>10 soal latihan</small></button><button class="btn" onclick="rang()">📝 Rangkuman<small>Ringkas dan jelas</small></button><button class="btn" onclick="rank()">🏆 Peringkat<small>Tersimpan lokal</small></button><button class="btn" onclick="dev()">👩‍🏫 Pengembang<small>Tentang pembuat</small></button></div></div>','menuutama',G[2])}
+function tujuan(){show('<div class="panel"><h2>🎯 Tujuan Pembelajaran</h2><p>Peserta didik mampu memahami serta menerapkan langkah-langkah penelitian sejarah, yaitu <b>heuristik, verifikasi, interpretasi, hingga historiografi</b>, untuk menyusun tulisan sejarah secara kritis, objektif, dan ilmiah.</p><p><b>Mata pelajaran:</b> Sejarah, Fase E / Kelas 10<br><b>Unit:</b> Penelitian dan Penulisan Sejarah, <b>Subunit:</b> Sumber Sejarah</p><p><b>Cara belajar:</b> baca materi, lalu selesaikan 4 kegiatan interaktif. Tombol Lanjut terbuka setelah kegiatan selesai. Uji dirimu di menu Bermain.</p></div>'+nav('Tujuan',0,'menu()','learn(0)'),'menuutama',G[3])}
+
+/* BELAJAR */
+function seq(el,items,i,k){k=k||0;const q=items[k];
+ el.innerHTML='<div class="q">'+(items.length>1?'('+(k+1)+'/'+items.length+') ':'')+q.q+'</div><div class="opts'+(q.o.length<3?' row':'')+'">'+q.o.map((x,j)=>'<button class="btn" data-j="'+j+'">'+x+'</button>').join('')+'</div><div class="fb"></div>';
+ const fb=el.querySelector('.fb'),bs=el.querySelectorAll('.opts .btn');
+ bs.forEach(b=>b.onclick=()=>{const j=+b.dataset.j;
+  if(j===q.a){sfx(1);b.classList.add('ok');bs.forEach(x=>x.disabled=true);const last=k>=items.length-1;
+   fb.innerHTML='✅ <b>Tepat!</b> '+q.w+(last?'':' <button class="btn sm" id="nq">Berikutnya</button>');
+   if(last)unlock(i);else fb.querySelector('#nq').onclick=()=>seq(el,items,i,k+1)}
+  else{sfx(0);b.classList.add('no');b.disabled=true;fb.innerHTML='❌ <b>Belum tepat.</b> '+(q.h||'Pikirkan lagi, lalu coba pilihan lain.')}})}
+function order(el,i){const c=['Heuristik: mengumpulkan sumber','Verifikasi: menguji keaslian dan kredibilitas sumber','Interpretasi: menafsirkan dan merangkai fakta','Historiografi: menulis hasil penelitian'],sh=[2,0,3,1];let pk=[],msg='';
+ (function r(){el.innerHTML='<div class="q">Ketuk kartu sesuai urutan langkah penelitian sejarah:</div><div class="slots">'+pk.map((p,n)=>'<div class="slot">'+(n+1)+'. '+c[p]+'</div>').join('')+'</div><div class="opts">'+sh.filter(p=>!pk.includes(p)).map(p=>'<button class="btn" data-p="'+p+'">'+c[p]+'</button>').join('')+'</div><div class="fb">'+msg+'</div>';
+  el.querySelectorAll('.opts .btn').forEach(b=>b.onclick=()=>{const p=+b.dataset.p;
+   if(p===pk.length){sfx(1);pk.push(p);msg=pk.length===4?'✅ <b>Urutan benar!</b> Sumber harus dikumpulkan dulu, diuji, ditafsirkan, baru ditulis. Menulis sebelum menguji sumber berisiko memuat data palsu.':'✅ <b>Benar.</b> Tahap ini sudah beres. Lanjutkan ke tahap berikutnya.';r();if(pk.length===4)unlock(i)}
+   else{sfx(0);msg='❌ <b>Belum tepat.</b> Tahap ini baru bisa dilakukan setelah tahap sebelumnya selesai.';r()}})})()}
+const S=[
+{t:'Selamat datang, Detektif Sejarah! 🕵️',h:'<p>Sejarah ditulis dari <b>bukti</b>, bukan tebakan. Sejarawan bekerja seperti detektif: mencari jejak, menguji kebenarannya, lalu menceritakannya.</p><p>Penelitian sejarah memiliki 4 langkah:</p><div class="chips"><span class="chip">🔎 Heuristik</span><span class="chip">🧪 Verifikasi</span><span class="chip">🧩 Interpretasi</span><span class="chip">✍️ Historiografi</span></div><p>Kita akan menjelajahinya satu per satu, lengkap dengan kegiatan interaktif.</p>'},
+{t:'🔎 Heuristik: Mencari Jejak',h:'<p><b>Heuristik</b> adalah kegiatan mencari dan mengumpulkan sumber sejarah.</p><div class="cards"><div class="card"><b>Sumber primer</b>Dibuat oleh pelaku atau saksi sezaman: arsip, surat, prasasti, foto, wawancara pelaku.</div><div class="card"><b>Sumber sekunder</b>Dibuat setelah peristiwa dan bukan oleh saksi: buku sejarah, artikel, film dokumenter.</div></div><p style="margin-top:12px">Menurut bentuknya, sumber dapat berupa <b>tertulis, lisan, benda,</b> dan <b>visual/audio</b>. Kumpulkan sumber yang beragam.</p>'},
+{t:'Kegiatan 1: Primer atau Sekunder?',ix:(e,i)=>seq(e,[
+ {q:'Surat tulisan tangan R.A. Kartini tahun 1901 termasuk sumber...',o:['Primer','Sekunder'],a:0,w:'Ditulis sendiri oleh pelaku pada masanya.'},
+ {q:'Buku pelajaran tentang kerajaan Majapahit yang terbit tahun 2020 termasuk sumber...',o:['Primer','Sekunder'],a:1,w:'Ditulis jauh setelah peristiwa oleh penulis yang bukan saksi.'},
+ {q:'Prasasti Kutai peninggalan abad ke-5 termasuk sumber...',o:['Primer','Sekunder'],a:0,w:'Prasasti dibuat pada masa peristiwa, sehingga menjadi jejak langsung.'},
+ {q:'Artikel jurnal tahun 2022 yang membahas Perang Diponegoro termasuk sumber...',o:['Primer','Sekunder'],a:1,w:'Artikel itu mengolah sumber lain, bukan kesaksian langsung.'}],i)},
+{t:'🧪 Verifikasi: Menguji Sumber',h:'<p><b>Verifikasi</b> (kritik sumber) memastikan sumber layak dipakai.</p><div class="cards"><div class="card"><b>Kritik ekstern</b>Menguji <i>keaslian</i> (otentisitas): bahan, tulisan, gaya bahasa, tanggal, dan asal sumber.</div><div class="card"><b>Kritik intern</b>Menguji <i>kredibilitas isi</i>: siapa penulisnya, sedekat apa dengan peristiwa, apa kepentingannya.</div></div><p style="margin-top:12px"><b>Korroborasi</b>: bandingkan beberapa sumber. Fakta yang dikuatkan banyak sumber lebih bisa dipercaya.</p>'},
+{t:'Kegiatan 2: Benar atau Salah?',ix:(e,i)=>seq(e,[
+ {q:'Kritik ekstern menilai apakah isi sumber dapat dipercaya.',o:['Benar','Salah'],a:1,w:'Itu tugas kritik intern. Kritik ekstern menguji keaslian sumber.'},
+ {q:'Fakta sebaiknya didukung minimal dua sumber yang saling menguatkan.',o:['Benar','Salah'],a:0,w:'Itulah korroborasi, yang membuat fakta lebih kuat.'},
+ {q:'Sumber yang ditulis penguasa pasti objektif karena resmi.',o:['Benar','Salah'],a:1,w:'Penguasa bisa punya kepentingan, sehingga isinya tetap harus diuji.'}],i)},
+{t:'🧩 Interpretasi: Merangkai Fakta',h:'<p>Fakta tidak berbicara sendiri. <b>Interpretasi</b> adalah menafsirkan fakta hasil verifikasi.</p><div class="cards"><div class="card"><b>Analisis</b>Menguraikan sumber menjadi fakta-fakta kecil.</div><div class="card"><b>Sintesis</b>Menggabungkan fakta menjadi rangkaian peristiwa dengan hubungan sebab-akibat.</div></div><p style="margin-top:12px">Pisahkan <b>fakta</b> dan <b>opini</b>. Tafsiran boleh berbeda, tetapi harus berdasar bukti dan bebas dari rasa suka atau tidak suka (subjektivitas).</p>'},
+{t:'Kegiatan 3: Studi Kasus',ix:(e,i)=>seq(e,[
+ {q:'Catatan kolonial menyebut sebuah perlawanan rakyat sebagai "kerusuhan", sedangkan surat pemimpin lokal menyebutnya "perjuangan membela tanah". Apa langkah terbaik sejarawan?',o:['Memilih catatan kolonial karena resmi','Memilih surat lokal karena terasa lebih benar','Memeriksa penulis, tujuan, dan waktu tiap sumber, lalu membandingkannya dengan sumber lain','Membuang kedua sumber'],a:2,w:'Setiap sumber punya sudut pandang. Sejarawan menguji dan membandingkan sebelum menyimpulkan.',h:'Memilih tanpa menguji berarti memihak, bukan meneliti.'},
+ {q:'Sumber-sumber lain ternyata menguatkan surat lokal. Bagaimana menuliskannya?',o:['Menulis tegas tanpa menyebut bukti','Menyajikan kesimpulan beserta bukti dan menyebut adanya perbedaan sudut pandang','Menghapus catatan kolonial dari tulisan'],a:1,w:'Tulisan ilmiah transparan: kesimpulan disertai bukti, perbedaan tetap diakui.',h:'Tulisan ilmiah harus dapat ditelusuri dan bersikap adil pada sumber.'}],i)},
+{t:'✍️ Historiografi: Menulis Sejarah',h:'<p><b>Historiografi</b> adalah penulisan hasil penelitian menjadi kisah sejarah.</p><div class="cards"><div class="card"><b>Pengantar</b>Latar belakang, rumusan masalah, metode, sumber.</div><div class="card"><b>Pembahasan</b>Uraian kronologis atau tematik, memuat sebab-akibat.</div><div class="card"><b>Simpulan</b>Jawaban atas masalah yang dikaji.</div><div class="card"><b>Catatan kaki dan daftar pustaka</b>Agar pembaca dapat menelusuri sumber.</div></div><p style="margin-top:10px">Gunakan bahasa baku yang kritis, objektif, dan ilmiah.</p>'},
+{t:'Kegiatan 4: Urutkan Langkah',ix:order},
+{t:'Hebat, Detektif! 🎉',h:'<p>Kamu sudah menjelajahi empat langkah penelitian sejarah: <b>heuristik, verifikasi, interpretasi,</b> dan <b>historiografi</b>.</p><p>Sekarang uji pemahamanmu di menu <b>Bermain</b>, atau baca <b>Rangkuman</b> sebelum mencoba.</p>'}];
+const done={};
+function learn(i){const s=S[i],lock=s.ix&&!done[i];
+ show('<div class="panel"><h2>'+s.t+'</h2>'+(s.ix?'<div class="ix"></div>':s.h)+'</div>'+nav('Langkah '+(i+1)+' dari '+S.length,Math.round((i+1)/S.length*100),i?'learn('+(i-1)+')':'menu()',i<S.length-1?'learn('+(i+1)+')':'menu()',lock),'belajarutama',G[i%4],d=>{if(s.ix)s.ix(d.querySelector('.ix'),i)})}
+function unlock(i){done[i]=1;const n=document.getElementById('nx');if(n)n.disabled=false}
+
+/* BERMAIN */
+const Q=[
+{q:'Urutan tahap penelitian sejarah yang benar adalah...',o:['Heuristik, verifikasi, interpretasi, historiografi','Verifikasi, heuristik, historiografi, interpretasi','Interpretasi, heuristik, verifikasi, historiografi','Historiografi, heuristik, interpretasi, verifikasi'],a:0,w:'Sumber dikumpulkan, diuji, ditafsirkan, baru ditulis.'},
+{q:'Kegiatan mencari dan mengumpulkan sumber sejarah disebut...',o:['Interpretasi','Heuristik','Historiografi','Verifikasi'],a:1,w:'Heuristik adalah tahap pengumpulan sumber.'},
+{q:'Contoh sumber primer adalah...',o:['Buku sejarah terbitan terbaru','Artikel blog tentang kerajaan','Notulen sidang BPUPKI yang dicatat saat sidang','Film dokumenter tahun 2023'],a:2,w:'Notulen dibuat pada saat peristiwa terjadi.'},
+{q:'Kritik ekstern bertujuan menguji...',o:['Keaslian sumber','Kepandaian penulis','Jumlah halaman sumber','Keindahan bahasa'],a:0,w:'Kritik ekstern menguji otentisitas, misalnya bahan dan tulisan.'},
+{q:'Menilai apakah isi sumber dapat dipercaya disebut...',o:['Kritik ekstern','Heuristik','Kritik intern','Historiografi'],a:2,w:'Kritik intern menilai kredibilitas isi sumber.'},
+{q:'Dua sumber saling bertentangan. Langkah terbaik adalah...',o:['Memilih sumber yang lebih panjang','Membandingkan dengan sumber lain (korroborasi)','Menghapus kedua sumber','Memilih yang sesuai pendapat sendiri'],a:1,w:'Korroborasi membantu menemukan fakta yang lebih kuat.'},
+{q:'Interpretasi dalam penelitian sejarah adalah...',o:['Menyalin isi sumber','Mencari sumber di arsip','Menafsirkan dan merangkai fakta hasil verifikasi','Mencetak hasil tulisan'],a:2,w:'Interpretasi menggabungkan fakta menjadi rangkaian bermakna.'},
+{q:'Penulisan hasil penelitian sejarah disebut...',o:['Heuristik','Historiografi','Kritik sumber','Korroborasi'],a:1,w:'Historiografi adalah tahap akhir: menulis sejarah.'},
+{q:'Sikap objektif dalam menulis sejarah berarti...',o:['Membela tokoh favorit','Mengikuti sumber penguasa','Berpegang pada bukti dan tidak memihak','Menghilangkan bagian yang tidak disukai'],a:2,w:'Objektif berarti kesimpulan lahir dari bukti, bukan perasaan.'},
+{q:'Mengapa catatan kaki dan daftar pustaka penting?',o:['Agar tulisan terlihat tebal','Agar pembaca dapat menelusuri dan memeriksa sumbernya','Agar penulis tidak perlu meneliti','Agar tulisan lebih berwarna'],a:1,w:'Rujukan membuat tulisan ilmiah dapat diuji pembaca.'}];
+let sc=0;
+function quiz(k){
+ if(k>=10)return fin();const q=Q[k];let ans=false;
+ show('<div class="panel"><div class="q" style="color:#1c2a7a">Soal '+(k+1)+' dari 10 &nbsp;|&nbsp; Skor: '+sc+'</div><div class="q">'+q.q+'</div><div class="opts">'+q.o.map((x,j)=>'<button class="btn" data-j="'+j+'">'+x+'</button>').join('')+'</div><div class="fb"></div></div>'+nav('Soal '+(k+1)+' dari 10',k*10,'menu()','quiz('+(k+1)+')',1),'bermainsoal'+(k+1),G[k%4],d=>{
+ const bs=d.querySelectorAll('.opts .btn'),fb=d.querySelector('.fb');
+ bs.forEach(b=>b.onclick=()=>{if(ans)return;ans=true;const j=+b.dataset.j;bs.forEach(x=>x.disabled=true);
+  if(j===q.a){sc+=10;sfx(1);b.classList.add('ok');fb.innerHTML='✅ <b>Benar!</b> '+q.w}
+  else{sfx(0);b.classList.add('no');bs[q.a].classList.add('ok');fb.innerHTML='❌ <b>Belum tepat.</b> Jawaban yang benar: <b>'+q.o[q.a]+'</b>. '+q.w}
+  d.querySelector('#nx').disabled=false;d.querySelector('#nx').textContent=k<9?'Lanjut ▶':'Selesai ▶'})})}
+function lbget(){try{const v=JSON.parse(localStorage.getItem('mpi_sej_lb')||'null');if(v)return v}catch(e){}return mem}
+function lbadd(n,s){const a=lbget().slice();a.push({n:n,s:s,d:new Date().toLocaleDateString('id-ID')});a.sort((x,y)=>y.s-x.s);mem=a.slice(0,50);try{localStorage.setItem('mpi_sej_lb',JSON.stringify(mem))}catch(e){}}
+function fin(){lbadd(name,sc);const m=sc>=80?'Luar biasa! Kamu detektif sejarah sejati.':sc>=60?'Bagus! Baca rangkuman lagi untuk menyempurnakan.':'Tetap semangat! Pelajari materi lagi lalu coba ulang.';
+ show('<div class="panel center"><h2>🎉 Permainan Selesai</h2><div style="font-size:90px;font-weight:800;color:#1c2a7a">'+sc+'</div><p>Skor dari 100. '+m+'</p><p>Skormu sudah masuk papan peringkat.</p><br><button class="btn" onclick="sc=0;quiz(0)">🔁 Main Lagi</button> &nbsp; <button class="btn" onclick="rank()">🏆 Peringkat</button> &nbsp; <button class="btn" onclick="menu()">🏠 Menu</button></div>','bermainsoal10',G[2])}
+function rank(){const a=lbget().slice(0,10);
+ show('<div class="panel"><h2>🏆 Papan Peringkat</h2>'+(a.length?'<table class="lb"><tr><th>#</th><th>Nama</th><th>Skor</th><th>Tanggal</th></tr>'+a.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+String(r.n).replace(/</g,'&lt;')+'</td><td>'+r.s+'</td><td>'+r.d+'</td></tr>').join('')+'</table>':'<p>Belum ada skor. Mainkan menu Bermain untuk mengisi peringkat.</p>')+'</div>'+nav('Peringkat tersimpan di perangkat ini',100,'menu()','menu()'),'papanperingkat',G[1])}
+function rang(){show('<div class="panel"><h2>📝 Rangkuman</h2><div class="cards"><div class="card"><b>🔎 Heuristik</b>Mencari dan mengumpulkan sumber: primer (pelaku/saksi) dan sekunder (dibuat kemudian).</div><div class="card"><b>🧪 Verifikasi</b>Kritik ekstern menguji keaslian; kritik intern menguji kredibilitas isi; bandingkan sumber.</div><div class="card"><b>🧩 Interpretasi</b>Analisis dan sintesis fakta menjadi rangkaian sebab-akibat tanpa subjektivitas.</div><div class="card"><b>✍️ Historiografi</b>Menulis hasil penelitian secara kritis, objektif, ilmiah, lengkap dengan rujukan.</div></div></div>'+nav('Rangkuman',100,'menu()','menu()'),'rangkuman',G[3])}
+function dev(){show('<div class="panel center"><h2>👩‍🏫 Pengembang</h2><div class="photo" id="ph"></div><p style="font-size:30px"><b>Rizkya Syafira, M.Pd.</b></p><p>SKB Kota Depok</p></div>'+nav('Pengembang',100,'menu()','menu()'),'menuutama',G[0],d=>bg(d.querySelector('#ph'),'pengembang'))}
+cover();
+</script></body></html>
